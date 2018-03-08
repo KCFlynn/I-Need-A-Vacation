@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<body>
+    
+<style>
+*
+{
+  padding: 0px;
+  margin: 0px;
+}
+#stage 
+{
+  position: absolute;
+  width: 512px;
+  height: 512px;
+  margin: 10px;
+  background-color: rgba(32,165,40,0.2);
+  display:block;
+    
+}
+#stage::after 
+{
+    content: "";
+    background-image: url('house2.png');
+    opacity: .3;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    z-index: -1;  
+} 
+#start 
+{
+  position: absolute;
+  width: 512px;
+  height: 512px;
+  margin: 10px;
+  background-color: rgba(100,185,100,1);
+    
+}
+.cell
+{
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+}
+#game
+{
+  width: 960px;
+  height: 567px;
+  background-color: rgba(32,165,40,0.3);
+  border: 4px solid rgba(32,165,40,0.7);
+  border-radius: 10px;
+  margin-left: 180px;
+  margin-top: 20px;
+}
+@font-face 
+{
+  font-family: verdana;  
+}
+h1
+{
+  margin-top: 3px;
+  text-align: center;
+  font-family: verdana;
+  font-size: 26px;
+}
+p
+{
+  font-family: verdana;
+  font-size: 16px;
+  width: 384px;
+  padding: 10px;
+  margin-left: 550px;
+    font-weight: bold;
+}
+#btn{
+  padding: 5px 10px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: verdana;
+  display: block;
+  position: absolute;
+  margin-left: 557px;
+  margin-top: 320px;
+  -webkit-border-radius:5px; 
+  background-color:rgba(255,128,0, .7); 
+  font-style: italic; 
+  cursor: pointer;
+}
+#btn:hover{
+   background-color: rgba(100,240,63,0.37);
+   color: blue;
+}
+#btn2{
+  padding: 5px 10px;
+  font-size: 24px;
+  font-weight: bold;
+  font-family: verdana;
+  display: block;
+  position: absolute;
+  margin-left: 657px;
+  margin-top: 320px;
+  -webkit-border-radius:5px; 
+  background-color:rgba(255,128,0, .7); 
+  font-style: italic; 
+  cursor: pointer;
+}
+#btn2:hover{
+   background-color: rgba(100,240,63,0.37);
+   color: blue;
+}
+#bigMom{
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 50px;
+    left: 50px;
+}
+
+.fade-in .callOut{
+  height: 260px;
+  width: 160px;
+}
+
+/* Keyframes for the fade-in */
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.fade-in {
+  opacity:0;
+  opacity: 1 \9; /*just in case ie*/
+  -webkit-animation:fadeIn ease-in 1;
+  -moz-animation:fadeIn ease-in 1;
+  animation:fadeIn ease-in 1;
+
+  -webkit-animation-fill-mode:forwards;
+  -moz-animation-fill-mode:forwards;
+  animation-fill-mode:forwards;
+
+  -webkit-animation-duration:3s;
+  -moz-animation-duration:3s;
+  animation-duration:3s;
+}
+
+.fade-in.one {
+  -webkit-animation-delay: 0.1s;
+  -moz-animation-delay: 0.1s;
+  animation-delay: 0.1s;
+}
+    
+</style>
+<section id="game">
+    
+  <h1>~~~~~~~~&#x1F6EA I Need A Vacation Now Today! &#x1F6EA~~~~~~~~</h1>
+  <div id="stage" class='hide' style=border-radius:10px></div>
+  <div id='start' class='hide' style=border-radius:10px><img src='bigMom.png' id='bigMom'>
+  <img src='callOut-trans.png' class='fade-in' width='512'; height='512'; style=border-radius:10px></div>
+  <button id='btn'>PLAY</button>
+  <button type='reset' id='btn2'>RESET GAME</button>
+  <p id="output" class='hide'></p>
+  
+</section>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    
+<script>
+    $(function(){
+    $('button').click(function(){
+    $('#start').hide(2000);
+             
+ });
+});
+    $(function(){ 
+     $('#btn2').click(function(){
+       document.location.reload();
+ });           
+});
+    $(function() {
+   
+    $('#bigMom').animate(
+           {
+                left: '+=80px',
+                top:'+=200px',
+                width: '+=70px',
+                height:'+=70px'
+            },
+            600
+    );  // end animate
+});
+
+    </script>
+<script>
+   
+let stage = document.querySelector('#stage');
+let output = document.querySelector('#output');
+    
+window.addEventListener("keydown", keydownHandler, false);    
+    
+let map =[
+[0, 0, 0, 0, 3, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 2, 0, 1, 0, 0, 0],
+[0, 1, 0, 0, 0, 0, 2, 0],
+[0, 0, 0, 2, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 1, 0, 0],
+[0, 2, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 2, 0, 0, 1]
+];
+    
+ let gameObjects =[
+[0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0, 0, 5, 0, 0, 0, 0],
+[0, 0, 0, 0, 0, 0, 0, 0],
+[4, 0, 0, 0, 0, 0, 0, 0]
+];   
+
+const HOUSE = 0;
+const BED = 1;
+const TOY = 2;
+const VACATION = 3;
+const MOM = 4;
+const BABY = 5;
+
+const SIZE = 64;
+   
+const ROWS = map.length;
+const COLUMNS = map[0].length;
+
+let houseRow;
+let houseColumn;
+let babyRow;
+let babyColumn;
+for(let row = 0; row < ROWS; row++) 
+{	
+  for(let column = 0; column < COLUMNS; column++) 
+  {
+    if(gameObjects[row][column] === MOM)
+    { 
+      houseRow = row;
+      houseColumn = column;
+    }
+    if(gameObjects[row][column] === BABY)
+    { 
+      babyRow = row;
+      babyColumn = column;
+    }
+  }
+}
+//Arrow key codes
+const UP = 38;
+const DOWN = 40;
+const RIGHT = 39;
+const LEFT = 37;
+//The game variables
+let sleep = 10;
+let nap = 10;
+let experience = 0;
+let gameMessage = "<br><br>Use the arrow keys to get to your vacation.";
+render();
+function keydownHandler(event)
+{ 
+  switch(event.keyCode)
+  {
+    case UP:
+	    if(houseRow > 0)
+	    {
+	      //Clear the MOM's current cell
+	      gameObjects[houseRow][houseColumn] = 0;
+	      
+	      //Subract 1 from the MOM's row
+	      houseRow--;
+	      
+	      //Apply the MOM's new updated position to the array
+	      gameObjects[houseRow][houseColumn] = MOM;
+	    }
+	    break;
+	  
+	  case DOWN:
+	    if(houseRow < ROWS - 1)
+	    {
+	      gameObjects[houseRow][houseColumn] = 0;
+	      houseRow++;
+	      gameObjects[houseRow][houseColumn] = MOM;
+	    }
+	    break;
+	    
+	  case LEFT:
+	    if(houseColumn > 0)
+	    {
+	      gameObjects[houseRow][houseColumn] = 0;
+	      houseColumn--;
+	      gameObjects[houseRow][houseColumn] = MOM;
+	    }
+	    break;  
+	    
+	  case RIGHT:
+	    if(houseColumn < COLUMNS - 1)
+	    {
+	      gameObjects[houseRow][houseColumn] = 0;
+	      houseColumn++;
+	      gameObjects[houseRow][houseColumn] = MOM;
+	    }
+	    break; 
+  }
+  
+  //find out what kind of cell the MOM is on
+  switch(map[houseRow][houseColumn])
+  {
+    case HOUSE:
+      gameMessage = "You patrol the house."
+      break;
+    
+    case TOY:
+     cleanUp();
+      break; 
+    
+    case BED:
+      trade();
+      break; 
+      
+    case VACATION:
+      endGame();
+      break; 
+          
+    case BABY:
+      endGame();
+      break;
+  }
+  
+  //Move the BABY
+  moveBABY();
+  
+  
+  //Find out if the MOM is touching the BABY
+  if(gameObjects[houseRow][houseColumn] === BABY)
+  {
+    endGame();
+  }
+  
+  //Subtract some sleep each turn
+  sleep--;
+  
+  //Find out if the MOM has run out of sleep or gold
+  if(sleep <= 0 || nap <= 0)
+  {
+    endGame();
+  }
+  
+  //Render the game
+  render();
+}
+function moveBABY()
+{
+  //The 4 possible directions that the BABY can move
+  const UP = 1;
+  const DOWN = 2;
+  const LEFT = 3;
+  const RIGHT = 4;
+  
+  //An array to store the valid direction that
+  //the BABY is allowed to move in
+  let validDirections = [];
+  
+  //The final direction that the BABY will move in
+  let direction = undefined;
+  
+  //Find out what kinds of things are in the cells 
+  //that surround the BABY. If the cells contain HOUSE,
+  //push the corresponding direction into the validDirections array
+  if(babyRow > 0)
+  {
+    let thingAbove = map[babyRow - 1][babyColumn];
+    if(thingAbove === HOUSE)
+	  {
+	    validDirections.push(UP);
+	  }
+  }
+  if(babyRow < ROWS - 1)
+  { 
+    let thingBelow = map[babyRow + 1][babyColumn];
+    if(thingBelow === HOUSE)
+	  {
+	    validDirections.push(DOWN);
+	  }
+  }
+  if(babyColumn > 0)
+  {
+    let thingToTheLeft = map[babyRow][babyColumn - 1];
+    if(thingToTheLeft === HOUSE)
+	  {
+	    validDirections.push(LEFT);
+	  }
+  } 
+  if(babyColumn < COLUMNS - 1)
+  {
+    let thingToTheRight = map[babyRow][babyColumn + 1];
+    if(thingToTheRight === HOUSE)
+	  {
+	    validDirections.push(RIGHT);
+	  }
+  } 
+  
+  //The validDirections array now contains 0 to 4 directions that the 
+  //contain HOUSE cells. Which of those directions will the BABY
+  //choose to move in?
+  
+  //If a valid direction was found, Randomly choose one of the 
+  //possible directions and assign it to the direction variable
+  if(validDirections.length !== 0)
+  {
+    let randomNumber = Math.floor(Math.random() * validDirections.length);
+    direction = validDirections[randomNumber];
+  }
+  
+  //Move the BABY in the chosen direction
+  switch(direction)
+  {
+    case UP:
+      //Clear the BABY's current cell
+		  gameObjects[babyRow][babyColumn] = 0;
+		  //Subtract 1 from the BABY's row
+		  babyRow--; 
+		  //Apply the BABY's new updated position to the array
+		  gameObjects[babyRow][babyColumn] = BABY;
+		  break;
+	  
+	  case DOWN:
+	    gameObjects[babyRow][babyColumn] = 0;
+		  babyRow++;
+		  gameObjects[babyRow][babyColumn] = BABY;
+	    break;
+	  
+	  case LEFT:
+	    gameObjects[babyRow][babyColumn] = 0;
+		  babyColumn--;
+		  gameObjects[babyRow][babyColumn] = BABY;
+	    break;
+	 
+	 case RIGHT:
+	    gameObjects[babyRow][babyColumn] = 0;
+		  babyColumn++;
+		  gameObjects[babyRow][babyColumn] = BABY;
+  }
+}
+function trade()
+{
+  //Figure out how much sleep the bed has
+  //and how much it should cost
+  let bedSleep = experience + nap;
+  let cost = Math.ceil(Math.random() * bedSleep);
+  
+  //Let the player buy sleep if there's enough gold
+  //to afford it
+  if(nap > cost)
+  {
+    sleep += bedSleep;
+    nap -= cost;
+    experience += 2;
+    var audio = new Audio('snore.wav');
+    audio.play();
+    gameMessage 
+      = `You buy ${bedSleep} minutes of sleep`
+      + ` for ${cost} minutes of nap .`;
+  }
+  else
+  {
+    //Tell the player if they don't have enough gold
+    experience += 1;
+    gameMessage = "Baby won't nap long enough for you to sleep."
+  }
+}
+function cleanUp()
+{
+  
+  //Moms strength
+  let momStrength = Math.ceil((sleep + nap) / 2);
+  
+  //A random number between 1 and Moms strength
+  let babyStrength = Math.ceil(Math.random() * momStrength * 2);
+  
+  if(babyStrength > momStrength)
+  {
+    //Mom trips causing furby to make a noise
+    let stolenNap = Math.round(babyStrength / 2);
+    nap -= stolenNap;
+    
+    //Give the player some experience for trying  
+    experience += 1;
+    var audio = new Audio('furbs28.wav');
+    audio.play();
+    //Update the game message
+    gameMessage 
+      = `You trip on Furby waking baby, losing ${stolenNap} minutes of nap.`
+      + `<br><br>Mom's strength: ${momStrength}` 
+      + `<br><br>Baby's strength: ${babyStrength}`;
+  }
+  else
+  {
+    //You win the TOYs' gold
+    let napTime = Math.round(babyStrength / 2);
+    nap += napTime;
+    
+    //Add some experience  
+    experience += 2;
+    
+    //Update the game message
+    gameMessage 
+      = `You pick up another toy earning ${napTime} minutes of nap.`
+      + `<br><br>Mom's strength: ${momStrength}`  
+      + `<br><br>Baby's strength: ${babyStrength}`;
+  } 
+}
+function endGame()
+{
+  if(map[houseRow][houseColumn] === VACATION)
+  {
+    //Calculate the score
+    let score = sleep + nap + experience;
+    var audio = new Audio('707.wav');
+    audio.play();
+    //Display the game message
+    gameMessage 
+      = "You made it to your Vacation! " + `<br><br>Final Score: ${score}`; 
+  }
+  else if(gameObjects[houseRow][houseColumn] === BABY)
+  {
+    var audio = new Audio('Baby.wav');
+    audio.play();
+    gameMessage 
+      = "Your baby is sick! You'll have to cancel your vacation.";
+      
+  }
+  else
+  {
+    //Display the game message
+    if(nap <= 0)
+    {
+   
+      gameMessage += "<br><br>Game over"; 
+    }
+    else
+    {
+      gameMessage += "<br><br>Babys awake!"; 
+    }
+    var audio = new Audio('baby-crying-04.wav');
+    audio.play();
+    gameMessage
+    
+      += " baby pukes all over your new house dress!"; 
+  }
+    
+  
+  //Remove the keyboard listener to end the game
+  window.removeEventListener("keydown", keydownHandler, false);
+}    
+function render()
+{
+    if(stage.hasChildNodes())
+        {
+            for(let i = 0; i < ROWS * COLUMNS; i++)
+                {
+                    stage.removeChild(stage.firstChild);
+                }
+        }
+
+
+for(let row = 0; row < ROWS; row++)
+{
+ for(let column = 0; column < COLUMNS; column++)
+ {
+     let cell = document.createElement('img');
+     
+     cell.setAttribute('class', 'cell');
+     stage.appendChild(cell);
+     
+     switch(map[row][column])
+     {
+         case HOUSE: 
+         cell.src = "house.png";
+         break;
+         
+         case BED:
+         cell.src = "bed.png";
+         break;
+         
+         case TOY:
+         cell.src = "toy.png";
+         break;
+         
+         case VACATION:
+         cell.src = "vacation.png";
+         break;
+     }
+     
+           //Add the MOM and BABY from the gameObjects array
+	    switch(gameObjects[row][column])
+	    {
+	      case MOM:
+	        cell.src = "mom.png";
+	        break;   
+	        
+	      case BABY:
+	        cell.src = "baby.png";
+	        break;  
+	    } 
+     
+     
+     cell.style.top = row * SIZE  + 'px';
+     cell.style.left = column * SIZE  + 'px';
+   }
+ }
+     //Display the game message
+	output.innerHTML = gameMessage;
+	
+	//Display the player's sleep, gold, and experience
+	output.innerHTML 
+	  += `<br><br>Nap: ${nap}<br><br> Sleep:  
+	  ${sleep}<br><br>Experience: ${experience}`;
+}
+
+    </script>
+
+</body>
+</html>
