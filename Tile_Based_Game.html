@@ -36,7 +36,7 @@
   width: 512px;
   height: 512px;
   margin: 10px;
-  background-color: rgba(100,185,100,1);
+  background-color: rgba(100,220,100,1);
     
 }
 .cell
@@ -155,7 +155,7 @@ p
 </style>
 <section id="game">
     
-  <h1>~~~~~~~~&#x1F6EA I Need A Vacation Now Today! &#x1F6EA~~~~~~~~</h1>
+  <h1>~~&#x1F6EA~~&#x1F6EA~~&#x1F6EA I Need A Vacation Now Today! &#x1F6EA~~&#x1F6EA~~&#x1F6EA~~</h1>
   <div id="stage" class='hide' style=border-radius:10px></div>
   <div id='start' class='hide' style=border-radius:10px><img src='bigMom.png' id='bigMom'>
   <img src='callOut-trans.png' class='fade-in' width='512'; height='512'; style=border-radius:10px></div>
@@ -328,10 +328,7 @@ function keydownHandler(event)
     case VACATION:
       endGame();
       break; 
-          
-    case BABY:
-      endGame();
-      break;
+
   }
   
   //Move the BABY
@@ -347,7 +344,7 @@ function keydownHandler(event)
   //Subtract some sleep each turn
   sleep--;
   
-  //Find out if the MOM has run out of sleep or gold
+  //Find out if the MOM has run out of sleep or nap
   if(sleep <= 0 || nap <= 0)
   {
     endGame();
@@ -540,7 +537,7 @@ function endGame()
   else
   {
     //Display the game message
-    if(nap <= 0)
+    if(nap || sleep <= 0)
     {
    
       gameMessage += "<br><br>Game over"; 
