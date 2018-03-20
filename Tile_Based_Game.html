@@ -167,20 +167,20 @@ p
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     
 <script>
+    'use strict'
     $(function(){
-    $('button').click(function(){
+    $('button').click(function(){ //hides start page
     $('#start').hide(2000);
              
  });
 });
     $(function(){ 
-     $('#btn2').click(function(){
+     $('#btn2').click(function(){ // reloads game - new game
        document.location.reload();
  });           
 });
     $(function() {
-   
-    $('#bigMom').animate(
+    $('#bigMom').animate( //moves mom front center of start screen
            {
                 left: '+=80px',
                 top:'+=200px',
@@ -199,26 +199,28 @@ let output = document.querySelector('#output');
     
 window.addEventListener("keydown", keydownHandler, false);    
     
-let map =[
-[0, 0, 0, 0, 3, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0, 0],
-[0, 0, 2, 0, 1, 0, 0, 0],
-[0, 1, 0, 0, 0, 0, 2, 0],
-[0, 0, 0, 2, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 1, 0, 0],
-[0, 2, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 2, 0, 0, 1]
+let map =
+[
+    [0, 0, 0, 0, 3, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 2, 0, 1, 0, 0, 0],
+    [0, 1, 0, 0, 0, 0, 2, 0],
+    [0, 0, 0, 2, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 2, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 2, 0, 0, 1]
 ];
     
- let gameObjects =[
-[0, 0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0, 0],
-[0, 0, 0, 5, 0, 0, 0, 0],
-[0, 0, 0, 0, 0, 0, 0, 0],
-[4, 0, 0, 0, 0, 0, 0, 0]
+ let gameObjects =
+[
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 5, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [4, 0, 0, 0, 0, 0, 0, 0]
 ];   
 
 const HOUSE = 0;
@@ -233,8 +235,8 @@ const SIZE = 64;
 const ROWS = map.length;
 const COLUMNS = map[0].length;
 
-let houseRow;
-let houseColumn;
+let momRow;
+let momColumn;
 let babyRow;
 let babyColumn;
 for(let row = 0; row < ROWS; row++) 
@@ -243,8 +245,8 @@ for(let row = 0; row < ROWS; row++)
   {
     if(gameObjects[row][column] === MOM)
     { 
-      houseRow = row;
-      houseColumn = column;
+      momRow = row;
+      momColumn = column;
     }
     if(gameObjects[row][column] === BABY)
     { 
@@ -264,48 +266,55 @@ let nap = 10;
 let experience = 0;
 let gameMessage = "<br><br>Use the arrow keys to get to your vacation.";
 render();
-function keydownHandler(event){ 
-  switch(event.keyCode){
+function keydownHandler(event)
+    { 
+  switch(event.keyCode)
+  {
     case UP:
-	    if(houseRow > 0){
-	      //Clear the MOM's current cell
-	      gameObjects[houseRow][houseColumn] = 0;
+	    if(momRow > 0)
+        {
+	      //Clear MOM's current cell
+	      gameObjects[momRow][momColumn] = 0;
 	      
-	      //Subract 1 from the MOM's row
-	      houseRow--;
+	      //Subract 1 from MOM's row
+	      momRow--;
 	      
-	      //Apply the MOM's new updated position to the array
-	      gameObjects[houseRow][houseColumn] = MOM;
+	      //Apply MOM's new updated position to the array
+	      gameObjects[momRow][momColumn] = MOM;
 	    }
 	    break;
 	  
 	  case DOWN:
-	    if(houseRow < ROWS - 1){
-	      gameObjects[houseRow][houseColumn] = 0;
-	      houseRow++;
-	      gameObjects[houseRow][houseColumn] = MOM;
+	    if(momRow < ROWS - 1)
+        {
+	      gameObjects[momRow][momColumn] = 0;
+	      momRow++;
+	      gameObjects[momRow][momColumn] = MOM;
 	    }
 	    break;
 	    
 	  case LEFT:
-	    if(houseColumn > 0){
-	      gameObjects[houseRow][houseColumn] = 0;
-	      houseColumn--;
-	      gameObjects[houseRow][houseColumn] = MOM;
+	    if(momColumn > 0)
+        {
+	      gameObjects[momRow][momColumn] = 0;
+	      momColumn--;
+	      gameObjects[momRow][momColumn] = MOM;
 	    }
 	    break;  
 	    
 	  case RIGHT:
-	    if(houseColumn < COLUMNS - 1){
-	      gameObjects[houseRow][houseColumn] = 0;
-	      houseColumn++;
-	      gameObjects[houseRow][houseColumn] = MOM;
+	    if(momColumn < COLUMNS - 1)
+        {
+	      gameObjects[momRow][momColumn] = 0;
+	      momColumn++;
+	      gameObjects[momRow][momColumn] = MOM;
 	    }
 	    break; 
   }
   
   //find out what kind of cell the MOM is on
-  switch(map[houseRow][houseColumn]){
+  switch(map[momRow][momColumn])
+  {
     case HOUSE:
       gameMessage = "You patrol the house."
       break;
@@ -315,36 +324,41 @@ function keydownHandler(event){
       break; 
     
     case BED:
-      trade();
+      sleeping();
       break; 
       
     case VACATION:
       endGame();
-      break; 
+      break;
+
 
   }
   
   //Move the BABY
-  moveBABY();
   
-  
+       
   //Find out if the MOM is touching the BABY
-  if(gameObjects[houseRow][houseColumn] === BABY){
+  if((momRow === babyRow) && (momColumn === babyColumn))
+  {
     endGame();
   }
   
   //Subtract some sleep each turn
   sleep--;
-  
+  moveBABY();
   //Find out if the MOM has run out of sleep or nap
-  if(sleep <= 0 || nap <= 0) {
+  if(sleep <= 0 || nap <= 0)
+  {
     endGame();
   }
+        
   
   //Render the game
   render();
+        
 }
-function moveBABY(){
+function moveBABY()
+    {
   //The 4 possible directions that the BABY can move
   const UP = 1;
   const DOWN = 2;
@@ -361,27 +375,35 @@ function moveBABY(){
   //Find out what kinds of things are in the cells 
   //that surround the BABY. If the cells contain HOUSE,
   //push the corresponding direction into the validDirections array
-  if(babyRow > 0){
+  if(babyRow > 0)
+  {
     let thingAbove = map[babyRow - 1][babyColumn];
-    if(thingAbove === HOUSE){
-	    validDirections.push(UP);
-	  }
+    if(thingAbove === HOUSE)
+    {
+      validDirections.push(UP);
+    }
   }
-  if(babyRow < ROWS - 1){ 
+  if(babyRow < ROWS - 1)
+  { 
     let thingBelow = map[babyRow + 1][babyColumn];
-    if(thingBelow === HOUSE){
+    if(thingBelow === HOUSE)
+    {
 	    validDirections.push(DOWN);
 	  }
   }
-  if(babyColumn > 0){
+  if(babyColumn > 0)
+  {
     let thingToTheLeft = map[babyRow][babyColumn - 1];
-    if(thingToTheLeft === HOUSE) {
+    if(thingToTheLeft === HOUSE) 
+    {
 	    validDirections.push(LEFT);
 	  }
   } 
-  if(babyColumn < COLUMNS - 1){
+  if(babyColumn < COLUMNS - 1)
+  {
     let thingToTheRight = map[babyRow][babyColumn + 1];
-    if(thingToTheRight === HOUSE){
+    if(thingToTheRight === HOUSE)
+    {
 	    validDirections.push(RIGHT);
 	  }
   } 
@@ -392,13 +414,15 @@ function moveBABY(){
   
   //If a valid direction was found, Randomly choose one of the 
   //possible directions and assign it to the direction variable
-  if(validDirections.length !== 0){
+  if(validDirections.length !== 0)
+  {
     let randomNumber = Math.floor(Math.random() * validDirections.length);
     direction = validDirections[randomNumber];
   }
   
   //Move the BABY in the chosen direction
-  switch(direction){
+  switch(direction)
+  {
     case UP:
       //Clear the BABY's current cell
 		  gameObjects[babyRow][babyColumn] = 0;
@@ -426,7 +450,7 @@ function moveBABY(){
 		  gameObjects[babyRow][babyColumn] = BABY;
   }
 }
-function trade(){
+function sleeping(){
   //Figure out how much sleep the bed has
   //and how much it should cost
   let bedSleep = experience + nap;
@@ -434,7 +458,8 @@ function trade(){
   
   //Let the player buy sleep if there's enough gold
   //to afford it
-  if(nap > cost){
+  if(nap > cost)
+  {
     sleep += bedSleep;
     nap -= cost;
     experience += 2;
@@ -444,13 +469,15 @@ function trade(){
       = `You buy ${bedSleep} minutes of sleep`
       + ` for ${cost} minutes of nap .`;
   }
-  else{
+  else
+  {
     //Tell the player if they don't have enough gold
     experience += 1;
     gameMessage = "Baby won't nap long enough for you to sleep."
   }
 }
-function cleanUp(){
+function cleanUp()
+    {
   
   //Moms strength
   let momStrength = Math.ceil((sleep + nap) / 2);
@@ -458,7 +485,8 @@ function cleanUp(){
   //A random number between 1 and Moms strength
   let babyStrength = Math.ceil(Math.random() * momStrength * 2);
   
-  if(babyStrength > momStrength){
+  if(babyStrength > momStrength)
+  {
     //Mom trips causing furby to make a noise
     let stolenNap = Math.round(babyStrength / 2);
     nap -= stolenNap;
@@ -473,8 +501,9 @@ function cleanUp(){
       + `<br><br>Mom's strength: ${momStrength}` 
       + `<br><br>Baby's strength: ${babyStrength}`;
   }
-  else{
-    //You win the TOYs' gold
+  else
+  {
+   
     let napTime = Math.round(babyStrength / 2);
     nap += napTime;
     
@@ -488,8 +517,18 @@ function cleanUp(){
       + `<br><br>Baby's strength: ${babyStrength}`;
   } 
 }
-function endGame(){
-  if(map[houseRow][houseColumn] === VACATION){
+function endGame()
+{
+      if((momRow === babyRow) && (momColumn === babyColumn))
+  {
+    var audio = new Audio('Baby.wav');
+    audio.play();
+    gameMessage 
+      = "Game over! Your baby is sick! <br><br>You'll have to cancel your vacation.";
+
+  }
+  else if(map[momRow][momColumn] === VACATION)
+  {
     //Calculate the score
     let score = sleep + nap + experience;
     var audio = new Audio('707.wav');
@@ -498,53 +537,55 @@ function endGame(){
     gameMessage 
       = "You made it to your Vacation! " + `<br><br>Final Score: ${score}`; 
   }
-  else if(gameObjects[houseRow][houseColumn] === BABY){
-    var audio = new Audio('Baby.wav');
-    audio.play();
-    gameMessage 
-      = "Your baby is sick! You'll have to cancel your vacation.";
-      
-  }
-  else{
+
+  else
+  {
     //Display the game message
-    if(nap <= 0){
-   
-      gameMessage += "<br><br>Game over"; 
+    if(nap <= 0)
+    {
+      gameMessage += "<br><br>Game over!"; 
     }
-    if(sleep <= 0){
-   
-      gameMessage += "<br><br>Game over"; 
+    else if(sleep <= 0)
+    {
+      gameMessage += "<br><br>Game over!"; 
     }
-    else{
+    else
+    {
       gameMessage += "<br><br>Babys awake!"; 
     }
     var audio = new Audio('baby-crying-04.wav');
     audio.play();
     gameMessage
     
-      += " baby pukes all over your new house dress!"; 
+      += "<br><br>Baby pukes all over your new house dress!"; 
   }
     
   
   //Remove the keyboard listener to end the game
   window.removeEventListener("keydown", keydownHandler, false);
 }    
-function render(){
-    if(stage.hasChildNodes()){
-            for(let i = 0; i < ROWS * COLUMNS; i++){
-                    stage.removeChild(stage.firstChild);
-                }
+function render()
+    {
+    if(stage.hasChildNodes())
+    {
+        for(let i = 0; i < ROWS * COLUMNS; i++)
+        {
+            stage.removeChild(stage.firstChild);
         }
+    }
 
 
-for(let row = 0; row < ROWS; row++){
- for(let column = 0; column < COLUMNS; column++){
+for(let row = 0; row < ROWS; row++)
+{
+ for(let column = 0; column < COLUMNS; column++)
+ {
      let cell = document.createElement('img');
      
      cell.setAttribute('class', 'cell');
      stage.appendChild(cell);
      
-     switch(map[row][column]) {
+     switch(map[row][column]) 
+     {
          case HOUSE: 
          cell.src = "house.png";
          break;
@@ -563,7 +604,8 @@ for(let row = 0; row < ROWS; row++){
      }
      
            //Add the MOM and BABY from the gameObjects array
-	    switch(gameObjects[row][column]) {
+	    switch(gameObjects[row][column])
+        {
 	      case MOM:
 	        cell.src = "mom.png";
 	        break;   
